@@ -23,18 +23,6 @@ function buildJarvisInstructions(workflow, responseLanguage) {
   ].join(' ');
 }
 
-function buildTranscriptionPrompt(language) {
-  if (language === 'hi') {
-    return 'Hindi speech. Return only the spoken Hindi words in Devanagari.';
-  }
-
-  if (language === 'ja') {
-    return 'Japanese speech. Return only the spoken Japanese words.';
-  }
-
-  return 'English speech. Return only the spoken English words.';
-}
-
 export async function createAssistantReply({
   apiKey,
   model,
@@ -153,16 +141,15 @@ export async function transcribeAudio({
   }
 
   const blob = new Blob([audioBuffer], {
-    type: mimeType || 'audio/webm',
+    type: mimeType || 'audio/wav',
   });
   const formData = new FormData();
-  formData.append('file', blob, filename || 'jarvis-audio.webm');
+  formData.append('file', blob, filename || 'jarvis-audio.wav');
   formData.append('model', 'whisper-1');
   formData.append('temperature', '0');
   if (language) {
     formData.append('language', language);
   }
-  formData.append('prompt', buildTranscriptionPrompt(language));
 
   const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
     method: 'POST',
@@ -178,12 +165,22 @@ export async function transcribeAudio({
   }
 
   const data = await response.json();
+  const text =
+    data.text ||
+    data.output_text ||
+    data.output?.[0]?.content?.[0]?.text ||
+    data.output
+      ?.flatMap((item) => item.content || [])
+      ?.find((item) => typeof item?.text === 'string')?.text ||
+    '';
 
-  if (!data.text) {
-    throw new Error('Transcription response did not include text.');
+  if (!text) {
+    throw new Error(
+      `Transcription response did not include text. Keys: ${Object.keys(data).join(', ')}`
+    );
   }
 
-  return data.text;
+  return text;
 }
 
 export async function fetchTopNews({ apiKey }) {

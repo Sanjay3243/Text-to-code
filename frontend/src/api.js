@@ -114,7 +114,7 @@ export function openDesktopUrl(payload) {
 
 export async function transcribeAudio(blob, options = {}) {
   const formData = new FormData();
-  formData.append('audio', blob, 'jarvis-recording.webm');
+  formData.append('audio', blob, 'jarvis-recording.wav');
   if (options.language) {
     formData.append('language', options.language);
   }

@@ -581,22 +581,27 @@ function App() {
         language: voiceLanguage,
       });
 
-      if (result.text === '[unclear]' || looksLikeHallucinatedTranscript(result.text)) {
-        setVoiceState('Retry Needed');
+      const transcript = String(result.text || '').trim();
+      const looksSuspicious = looksLikeHallucinatedTranscript(transcript);
+
+      if (looksSuspicious) {
+        setInput('');
         setLiveTranscript('');
+        setVoiceState('Retry Needed');
         setVoiceDebug(
-          'Transcription looked unreliable. Please retry with a shorter and clearer recording.'
+          'The transcript looked unstable or repetitive. Please retry with a short and clear voice sample.'
         );
-        setError('Voice input was unclear. Please try again.');
+        setError('Voice transcript looked inaccurate. Please try again.');
         return;
       }
 
-      setInput(result.text);
-      setLiveTranscript(result.text);
+      setInput(transcript);
+      setLiveTranscript(transcript);
       setVoiceState('Transcript Ready');
       setVoiceDebug(
         `Audio transcribed successfully using language hint: ${voiceLanguage}.`
       );
+      setError('');
     } catch (transcriptionError) {
       setVoiceState('Voice Error');
       setError(transcriptionError.message);
@@ -1470,11 +1475,38 @@ function looksLikeHallucinatedTranscript(text) {
     return true;
   }
 
-  if (normalized.split(/\s+/).length > 14) {
+  if (/^if the audio is unclear/i.test(normalized)) {
+    return true;
+  }
+
+  if (/https?:\/\//i.test(normalized)) {
+    return true;
+  }
+
+  if (hasRepeatedPattern(normalized)) {
+    return true;
+  }
+
+  if (normalized.split(/\s+/).length > 45) {
     return true;
   }
 
   return false;
+}
+
+function hasRepeatedPattern(text) {
+  const compact = text.replace(/\s+/g, '');
+
+  if (compact.length < 12) {
+    return false;
+  }
+
+  if (/(.{2,8})\1{3,}/u.test(compact)) {
+    return true;
+  }
+
+  const uniqueChars = new Set(compact).size;
+  return uniqueChars <= Math.max(3, Math.floor(compact.length * 0.18));
 }
 
 function encodeWav(chunks, sampleRate) {
