@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portfolio Part</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 40px;
+        }
+
+        .portfolio-card {
+            background: white;
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .portfolio-card img {
+            width: 100%;
+            height: auto;
+            border-radius: 6px;
+        }
+
+        .portfolio-card h2 {
+            margin: 15px 0 10px;
+        }
+
+        .portfolio-card p {
+            color: #555;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            outline: none;
+            transition: background-color 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="portfolio-card"> <img src="https://via.placeholder.com/400x200" alt="Project Image" />
+        <h2>My Project</h2>
+        <p>This is a brief description of my project. It is responsive and interactive.</p> <button class="btn"
+            id="showAlertBtn">Click Me</button>
+    </div>
+    <script> document.getElementById('showAlertBtn').addEventListener('click', function () { alert('Thank you for checking my project!'); }); </script>
+</body>
+
+</html>
