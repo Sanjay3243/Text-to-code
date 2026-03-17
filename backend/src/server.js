@@ -33,10 +33,9 @@ const frontendBuildPath = path.join(__dirname, '..', '..', 'frontend', 'build');
 const app = express();
 const upload = multer();
 const port = Number(process.env.PORT || 4000);
-const frontendOrigin = process.env.FRONTEND_ORIGIN || 'http://localhost:3000';
 const model = process.env.OPENAI_MODEL || 'gpt-4.1-mini';
 
-app.use(cors({ origin: frontendOrigin }));
+app.use(cors({ origin: '*' }));
 app.use(express.json());
 
 app.get('/api/health', async (_request, response) => {

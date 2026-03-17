@@ -1,9 +1,8 @@
 const API_BASE_URL =
-  process.env.REACT_APP_API_URL ||
-  (window.location.hostname === 'localhost' ? 'http://localhost:4000/api' : '/api');
+  process.env.REACT_APP_API_URL || 'https://text-to-code-epfu.onrender.com';
 
 async function request(path, options = {}) {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const response = await fetch(`${API_BASE_URL}/api${path}`, {
     headers: {
       'Content-Type': 'application/json',
       ...(options.headers || {}),
@@ -120,7 +119,7 @@ export async function transcribeAudio(blob, options = {}) {
     formData.append('language', options.language);
   }
 
-  const response = await fetch(`${API_BASE_URL}/transcribe`, {
+  const response = await fetch(`${API_BASE_URL}/api/transcribe`, {
     method: 'POST',
     body: formData,
   });
